@@ -1,4 +1,4 @@
-import { SlashCommand, CommandOptionType, SlashCreator, CommandContext } from 'slash-create/web';
+import { SlashCommand, CommandOptionType, SlashCreator, CommandContext, MessageEmbedOptions } from 'slash-create/web';
 import { result } from '../cf.json';
 
 const { problems } = result;
@@ -19,13 +19,17 @@ export default class BotCommand extends SlashCommand {
   }
 
   async run(ctx: CommandContext) {
-    let s = '';
+    let emb = [];
     if (ctx.options.n > 6) return 'Nuh uh';
     for (let i = 0; i < ctx.options.n; i++) {
       let prob = problems[Math.floor(Math.random() * problems.length)];
-      s += `\nName: ${prob.name}\nLink: https://codeforces.com/problemset/problem/${prob.contestId}/${prob.index}
-      `;
+      const embopt: MessageEmbedOptions = {
+        color: 0xff11ff,
+        url: `https://codeforces.com/problemset/problem/${prob.contestId}/${prob.index}`,
+        title: prob.name
+      };
+      emb.push(embopt);
     }
-    return s;
+    return await ctx.send({ embeds: emb });
   }
 }
